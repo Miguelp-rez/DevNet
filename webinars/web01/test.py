@@ -34,7 +34,7 @@ if __name__ == '__main__':
 	# Connect to device, but silent logs
 	device.connect(log_stdout = False)
 	if device.is_connected():
-		print(f'successful connection to: {device}')
+		print(f'Successful connection to {device.name}')
 		# The execute method returns a string with raw output
 		# show_version[device.name] = device.execute('show version')
 		
@@ -43,3 +43,9 @@ if __name__ == '__main__':
 
 		# Show the result
 		print(show_version[device.name])
+
+	device.disconnect()
+	if device.is_connected():
+		print('Error disconnecting')
+	else:
+		print(f'Disconnected successfully from {device.name}')
