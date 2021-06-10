@@ -100,7 +100,8 @@ def get_inventory(device, show_version, show_inventory):
 		serial_number = show_inventory[hostname]['output']['main']['chassis'][model]['sn']
 	elif device_os == 'nxos':
 		software_version = show_version[hostname]['output']['platform']['software']['system_version']
-		uptime = show_version[hostname]['output']['platform']['kernel_uptime']
+		uptime_dic = show_version[hostname]['output']['platform']['kernel_uptime']
+		uptime = f"{uptime_dic['days']} days, {uptime_dic['hours']} hours, {uptime_dic['minutes']} minutes"
 		serial_number = show_inventory[hostname]['output']['name']['Chassis']['serial_number']
 	elif device_os == 'asa':
 		software_version = None
