@@ -24,3 +24,14 @@ Create a testbed file from the inventory spreadsheet.
     pyats create testbed file\
      --path nso_sandbox_devices.xlsx\
      --output nso_sandbox_testbed.yaml
+
+Verify if pyATS commands work correctly.
+
+	pyats parse 'show version'\
+	 --testbed nso_sandbox_testbed.yaml
+	pyats parse 'show inventory'\
+	 --testbed nso_sandbox_testbed.yaml
+
+NOTE: At the time of this writing there is not a parser for the 'show version' 
+command in ASA devices. Also, in some devices the 'show inventory' command was  
+parsed correctly, but it returned empty.
