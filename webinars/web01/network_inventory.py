@@ -36,16 +36,22 @@ if __name__ == '__main__':
 	args = parser.parse_args()
 
 	# Load testbed file
+	print(f'Loading {args.testbed} file')
 	testbed = load(args.testbed)
 
 	# Connect to all devices, but silent logs
-	print('Connecting to all devices')
+	print(f'Connecting to all devices in {testbed.name}')
 	testbed.connect(log_stdout=False)
 
 	# Run commands to gather information from network devices
+	for device in testbed.devices.values():
+		print(f'Device {device.name}')
+		show_version[device.name] = device.parse('show version')
+		show_inventory[device.name] = device.parse('show inventory')
+		print('show version: ', show_version[device.name])
+		print('show_inventory: ', show_inventory[device.name])
 
 	# Disconnect from all devices
-	# testbed.devices is a dictionary
 	# { hostname : <Device object> }
 	for device in testbed.devices.values():
 		device.disconnect()
