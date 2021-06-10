@@ -22,6 +22,15 @@ from genie.libs.parser.utils.common import ParserNotFound
 from pprint import pprint
 
 """
+This function is used to look for information between two substrings
+It only returns the first coincidence inside another string called 'text'.
+"""
+def search_between(lstring, rstring, text):
+    start_position = text.index(lstring)
+    end_position = text.find(rstring, start_position)
+    print(text[start_position + len(lstring): end_position])
+
+"""
 This fuction tries to parse a command on a device, but
 returns raw output in case the command is not supported
 """
@@ -69,9 +78,9 @@ returns standardized output
 	#
 	ASA
 	# software version: show_version[hostname][output]
-	# 	Cisco Adaptive Security Appliance Software Version 9.12(2)
+	#	'Version 9.12(2) \n'
 	# uptime: show_version[hostname][output]
-	# 	edge-firewall01 up 1 hour 20 mins
+	# 	'edge-firewall01 up 2 hours 58 mins\n'
 	# serial number: show_inventory[hostname][output][Chassis][sn]
 	#	'9ABC7VGUPFA'
 	#
@@ -104,7 +113,8 @@ def get_inventory(device, show_version, show_inventory):
 		uptime = f"{uptime_dic['days']} days, {uptime_dic['hours']} hours, {uptime_dic['minutes']} minutes"
 		serial_number = show_inventory[hostname]['output']['name']['Chassis']['serial_number']
 	elif device_os == 'asa':
-		software_version = None
+		raw_output = show_version[hostname][output]
+		software_version = raw
 		uptime = None
 		serial_number = show_inventory[hostname]['output']['Chassis']['sn']
 	elif device_os == 'ios':
