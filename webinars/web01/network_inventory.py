@@ -17,6 +17,21 @@ Usage
 """
 
 from pyats.topology.loader import load
+from genie.metaparser.util.exceptions import SchemaEmptyParserError
+
+"""
+This fuction tries to parse a command on a device, but
+returns raw output in case the command is not supported
+"""
+def parse_command(device, command):
+	print(f'Running {command} on {device.name}')
+	try:
+		output = device.parse(command)
+		return {'type': 'parsed', 'output': output}
+	except SchemaEmptyParserError:
+		print(f'Parsed {command}, but it returned empty')
+
+	
 
 # If run as a script
 if __name__ == '__main__':
@@ -43,17 +58,17 @@ if __name__ == '__main__':
 	print(f'Connecting to all devices in {testbed.name}')
 	testbed.connect(log_stdout=False)
 
-	# Run commands to gather information from network devices
+	# testbed.devices = { hostname : <Device object> }
 	for device in testbed.devices.values():
-		print(f'Device {device.name}')
-		show_version[device.name] = device.parse('show version')
-		show_inventory[device.name] = device.parse('show inventory')
+		# Run commands to gather information from network device
+		show_version[device.name] = parse_command(device,'show version')
+		show_inventory[device.name] = parse_command(device, 'show inventory')
+		
+		# Show new information
 		print('show version: ', show_version[device.name])
 		print('show_inventory: ', show_inventory[device.name])
 
-	# Disconnect from all devices
-	# { hostname : <Device object> }
-	for device in testbed.devices.values():
+		# Disconnect from device
 		device.disconnect()
 		print(f'Disconnected successfully from {device.name}')
 
