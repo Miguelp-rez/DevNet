@@ -18,6 +18,7 @@ Usage
 
 from pyats.topology.loader import load
 from genie.metaparser.util.exceptions import SchemaEmptyParserError
+from genie.libs.parser.utils.common import ParserNotFound
 
 """
 This fuction tries to parse a command on a device, but
@@ -30,7 +31,12 @@ def parse_command(device, command):
 		return {'type': 'parsed', 'output': output}
 	except SchemaEmptyParserError:
 		print(f'Parsed {command}, but it returned empty')
+	except ParserNotFound:
+		print(f'Parser for {command} is not supported in {device}')
 
+	# Execute the command anyway, but return raw output
+	output = device.execute(command)
+	return {'type': 'raw', 'output': output}
 	
 
 # If run as a script
