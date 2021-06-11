@@ -45,6 +45,6 @@ Verify if pyATS commands work correctly.
 	pyats parse 'show inventory'\
 	 --testbed nso_sandbox_testbed.yaml
 
-NOTE: At the time of this writing there is not a parser for the 'show version' 
-command in ASA devices. Also, in some devices the 'show inventory' command was  
+NOTE: At the time of this writing there is not a parser for the 'show version'
+command in ASA devices. Also, in some devices the 'show inventory' command was 
 parsed correctly, but it returned empty.
