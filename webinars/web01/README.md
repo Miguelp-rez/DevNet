@@ -6,6 +6,19 @@
 2. Gather data about the switches, routers, and firewalls deployed in the network.
 3. Include: device name, software version, uptime and serial numbers.
 
+## Topology
+
+Reserve the Cisco NSO [sandbox](https://devnetsandbox.cisco.com/RM/Diagram/Index/43964e62-a13c-4929-bde7-a2f68ad6b27c?diagramType=Topology) 
+to access all network devices in this lab.
+
+![Topology](/webinars/web01/topology.PNG)
+
+## Software requirements
+
+I used Ubuntu 20.04 LTS, but any other Linux host should work. 
+With regards to python, versions 3.8 or 3.7 are good choices in summer 2021.
+
+
 ## Activities
 
 Create a python virtual environment.
