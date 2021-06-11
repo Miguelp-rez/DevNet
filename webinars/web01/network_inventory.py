@@ -13,13 +13,14 @@ Goals
 		- serial number.
 
 Usage
-	./network_inventory <./path/to/testbed_file>
+	./network_inventory </path/to/testbed_file>
 """
 
 from pyats.topology.loader import load
 from genie.metaparser.util.exceptions import SchemaEmptyParserError
 from genie.libs.parser.utils.common import ParserNotFound
-from pprint import pprint
+from datetime import datetime
+import csv
 
 """
 This function is used to look for information between two substrings
@@ -40,9 +41,9 @@ def parse_command(device, command):
 		output = device.parse(command)
 		return {'type': 'parsed', 'output': output}
 	except SchemaEmptyParserError:
-		print(f'Parsed {command}, but it returned empty')
+		print(f'WARNING: Parsed {command}, but it returned empty')
 	except ParserNotFound:
-		print(f'Parser for {command} is not supported in {device}')
+		print(f'WARNING: Parser for {command} is not supported in {device}')
 
 	# Execute the command anyway, but return raw output
 	output = device.execute(command)
@@ -163,12 +164,24 @@ if __name__ == '__main__':
 		# pprint(show_inventory)
 
 		# Build network inventory
-		print(get_inventory(device, show_version, show_inventory))
-		#network_inventory.append(get_inventory(device, show_version, show_inventory))
+		#print(get_inventory(device, show_version, show_inventory))
+		network_inventory.append(get_inventory(device, show_version, show_inventory))
 		
 		# Disconnect from device
 		device.disconnect()
 		print(f'Disconnected successfully from {device.name}')
 
-	
+
+	# Network inventory output filename
+	now = datetime.now()
+	inventory_filename = f'{now.strftime("%Y-%m-%d-%H-%M-%S")}_{testbed.name}_inventory.csv'
+
 	# Write to a CSV file
+	print(f'Writing to {inventory_filename}')
+
+	with open(inventory_filename, 'w', newline='') as csvfile:
+		writer = csv.writer(csvfile, dialect='excel')
+		writer.writerow(('device_name', 'device_os', 'software_version', 'uptime', 'serial_number'))
+
+		for device_info in network_inventory:
+			writer.writerow(device_info)
