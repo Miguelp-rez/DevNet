@@ -101,7 +101,7 @@ def get_inventory(device, show_version, show_inventory):
 	if device_os == 'iosxr':
 		software_version = show_version[hostname]['output']['software_version']
 		uptime = show_version[hostname]['output']['uptime']
-		serial_number = 'missing'
+		serial_number = show_inventory[hostname]['output']['module_name']['0/0/CPU0']['sn']
 	elif device_os == 'iosxe':
 		model = show_version[hostname]['output']['version']['chassis']
 		software_version = show_version[hostname]['output']['version']['version']
@@ -158,7 +158,9 @@ if __name__ == '__main__':
 	for device in testbed.devices.values():
 		# Run commands to gather information from network device
 		show_version[device.name] = parse_command(device,'show version')
+		# pprint(show_version)
 		show_inventory[device.name] = parse_command(device, 'show inventory')
+		# pprint(show_inventory)
 
 		# Build network inventory
 		print(get_inventory(device, show_version, show_inventory))
@@ -168,8 +170,5 @@ if __name__ == '__main__':
 		device.disconnect()
 		print(f'Disconnected successfully from {device.name}')
 
-	# uncomment the following to see the data structure
-	# pprint(show_version)
-	# pprint(show_inventory)
 	
 	# Write to a CSV file
