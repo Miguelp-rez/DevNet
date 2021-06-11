@@ -28,7 +28,7 @@ It only returns the first coincidence inside another string called 'text'.
 def search_between(lstring, rstring, text):
     start_position = text.index(lstring)
     end_position = text.find(rstring, start_position)
-    print(text[start_position + len(lstring): end_position])
+    return text[start_position + len(lstring): end_position]
 
 """
 This fuction tries to parse a command on a device, but
@@ -56,7 +56,7 @@ returns standardized output
 	#	'6.3.1'
 	# uptime: show_version[hostname][output][uptime]
 	#	'1 hour, 59 minutes'
-	# serial number: show_inventory is missing
+	# serial number: show_inventory[hostname][output][module_name]['0/0/CPU0']['sn']
 	#
 	IOS XE
 	# software version: show_version[hostname][output][version][version]
@@ -73,7 +73,7 @@ returns standardized output
 	#	'9.2(3)'	
 	# uptime: show_version[output][platform][kernel_uptime] 
 	# 	{'days': 0, 'hours': 0, 'minutes': 24, 'seconds': 29}
-	# serial number: show_inventory[hostname][output][name][Chassis][serial_number]
+	# serial number: show_inventory'missing'[hostname][output][name][Chassis][serial_number]
 	#	'9RDIN8H58L9'
 	#
 	ASA
@@ -113,9 +113,9 @@ def get_inventory(device, show_version, show_inventory):
 		uptime = f"{uptime_dic['days']} days, {uptime_dic['hours']} hours, {uptime_dic['minutes']} minutes"
 		serial_number = show_inventory[hostname]['output']['name']['Chassis']['serial_number']
 	elif device_os == 'asa':
-		raw_output = show_version[hostname][output]
-		software_version = raw
-		uptime = None
+		raw_output = show_version[hostname]['output']
+		software_version = search_between('Software Version ', '\r\n', raw_output)
+		uptime = search_between(f'{hostname} up ', '\r\n', raw_output)
 		serial_number = show_inventory[hostname]['output']['Chassis']['sn']
 	elif device_os == 'ios':
 		software_version = show_version[hostname]['output']['version']['version']
