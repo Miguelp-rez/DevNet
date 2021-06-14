@@ -5,7 +5,7 @@
 1. Configure interface descriptions on IOS, IOS XE, NX-OS, and IOS XR devices.
 2. Description format: Connected to {DEVICE} {INTERFACE} – {PURPOSE}.
 3. Save current description on interfaces for audit/change control.
-4. Check if interfaces are actually connected to interfaces listed in CSV file.
+4. Check if devices are actually connected to interfaces listed in CSV file.
 
 ## Topology
 
