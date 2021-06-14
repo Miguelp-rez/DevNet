@@ -8,6 +8,7 @@ Goal:
 	* Save current description on interfaces for audit/change control.
 	* Check if devices are actually connected to the interfaces listed in CSV file.
 """
+import csv
 
 if __name__ == '__main__':
 	import argparse
@@ -26,17 +27,22 @@ if __name__ == '__main__':
 
 	# Read the source of truth file
 	print(f'Reading {args.sot}')
+	with open(args.sot, newline='') as csvfile:
+		sot = csv.DictReader(csvfile)
+		for row in sot:
+			# Remove empty rows
+			if row['Device Name']:
+				print(f"{row['Device Name']:15} {row['Interface']:25} connected to {row['Connected Device']:15} {row['Connected Interface']}")
 
 	# Create interface descriptions
 
 	# Load testbed file
 	print(f'Loading {args.testbed}')
-	if args.apply:
-		print('Applying configurations')
-	
 	# Connect to all devices
 	# Grab current interface descriptions
 	# Apply new interface descriptions
+	if args.apply:
+		print('Applying configurations')
 	# Run cdp/lldp commands to grab neighbor information
 	# Check if devices are actually connected to the interfaces listed in CSV file.
 	# Disconnect from all devices
