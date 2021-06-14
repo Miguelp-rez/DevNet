@@ -8,6 +8,7 @@ Goal:
 	* Save current description on interfaces for audit/change control.
 	* Check if devices are actually connected to the interfaces listed in CSV file.
 """
+from pyats.topology.loader import load
 from jinja2 import Template
 from collections import defaultdict
 from pprint import pprint
@@ -63,15 +64,23 @@ if __name__ == '__main__':
 			print(configuration)
 		print('!\n')
 
-
 	# Load testbed file
 	print(f'Loading {args.testbed}')
+	testbed = load(args.testbed)
+
 	# Connect to all devices
+	print(f'Connecting to all devices in {testbed.name}')
+	testbed.connect(log_stdout=False)
+
 	# Grab current interface descriptions
 	# Apply new interface descriptions
 	if args.apply:
 		print('Applying configurations')
 	# Run cdp/lldp commands to grab neighbor information
 	# Check if devices are actually connected to the interfaces listed in CSV file.
+	
 	# Disconnect from all devices
+	for device in testbed.devices.values():
+		device.disconnect()
+		print(f'Disconnected successfully from {device.name}')
 	# Update source of truth file
