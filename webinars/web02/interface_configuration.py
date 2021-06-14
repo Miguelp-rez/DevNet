@@ -53,9 +53,16 @@ if __name__ == '__main__':
 						purpose = row['Purpose']
 						)
 
-	print("Config commands generated")
-	pprint(config_commands)
+	#print("Config commands generated")
+	#pprint(config_commands)
 	
+	# Display the config commands for the user to review
+	for device, interfaces in config_commands.items():
+		print(f'Device {device}')
+		for interface, configuration in interfaces.items():
+			print(configuration)
+		print('!\n')
+
 
 	# Load testbed file
 	print(f'Loading {args.testbed}')
