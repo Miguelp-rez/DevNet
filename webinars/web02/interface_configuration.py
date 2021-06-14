@@ -17,8 +17,11 @@ import csv
 if __name__ == '__main__':
 	import argparse
 	
-	# When a non existing key is accessed, it is initialized with a default value.
-	config_commands = defaultdict(dict)
+	# Interface description commands
+	device_config = defaultdict(dict)
+
+	# Output from learn interface model
+	interface_details = {}
 
 	# Read command line arguments
 	parser = argparse.ArgumentParser(
@@ -46,7 +49,7 @@ if __name__ == '__main__':
 			# Remove empty rows
 			if row['Device Name']:
 				# Create interface descriptions from template
-				config_commands[row['Device Name']][row['Interface']] = \
+				device_config[row['Device Name']][row['Interface']] = \
 					interface_template.render(
 						interface_name = row['Interface'],
 						connected_device = row['Connected Device'],
@@ -55,10 +58,10 @@ if __name__ == '__main__':
 						)
 
 	#print("Config commands generated")
-	#pprint(config_commands)
+	#pprint(device_config)
 	
 	# Display the config commands for the user to review
-	for device, interfaces in config_commands.items():
+	for device, interfaces in device_config.items():
 		print(f'Device {device}')
 		for interface, configuration in interfaces.items():
 			print(configuration)
@@ -73,6 +76,15 @@ if __name__ == '__main__':
 	testbed.connect(log_stdout=False)
 
 	# Grab current interface descriptions
+	for device in device_config.keys():
+		try:
+			print(f'Learning current interface configuration for device {device}')
+			interface_details[device] = testbed.devices[device].learn('interface')
+		except KeyError as e:
+			print(f'Error: Device {device} is not in the testbed')
+
+	pprint(interface_details)
+
 	# Apply new interface descriptions
 	if args.apply:
 		print('Applying configurations')
@@ -80,7 +92,9 @@ if __name__ == '__main__':
 	# Check if devices are actually connected to the interfaces listed in CSV file.
 	
 	# Disconnect from all devices
+	
 	for device in testbed.devices.values():
+		print(f'Disconnecting from {device.name}')
 		device.disconnect()
-		print(f'Disconnected successfully from {device.name}')
+
 	# Update source of truth file
