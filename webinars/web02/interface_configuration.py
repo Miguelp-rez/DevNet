@@ -8,11 +8,17 @@ Goal:
 	* Save current description on interfaces for audit/change control.
 	* Check if devices are actually connected to the interfaces listed in CSV file.
 """
+from jinja2 import Template
+from collections import defaultdict
+from pprint import pprint
 import csv
 
 if __name__ == '__main__':
 	import argparse
 	
+	# When a non existing key is accessed, it is initialized with a default value.
+	config_commands = defaultdict(dict)
+
 	# Read command line arguments
 	parser = argparse.ArgumentParser(
 		description='Updating interface descriptions')
@@ -29,12 +35,27 @@ if __name__ == '__main__':
 	print(f'Reading {args.sot}')
 	with open(args.sot, newline='') as csvfile:
 		sot = csv.DictReader(csvfile)
+		
+		# Open configuration template
+		with open('config_template.j2') as f:
+			interface_template = Template(f.read())
+		
+		# Loop over each row in the source of truth file
 		for row in sot:
 			# Remove empty rows
 			if row['Device Name']:
-				print(f"{row['Device Name']:15} {row['Interface']:25} connected to {row['Connected Device']:15} {row['Connected Interface']}")
+				# Create interface descriptions from template
+				config_commands[row['Device Name']][row['Interface']] = \
+					interface_template.render(
+						interface_name = row['Interface'],
+						connected_device = row['Connected Device'],
+						connected_interface = row['Connected Interface'],
+						purpose = row['Purpose']
+						)
 
-	# Create interface descriptions
+	print("Config commands generated")
+	pprint(config_commands)
+	
 
 	# Load testbed file
 	print(f'Loading {args.testbed}')
