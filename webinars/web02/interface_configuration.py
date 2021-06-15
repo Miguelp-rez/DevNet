@@ -12,6 +12,7 @@ from pyats.topology.loader import load
 from jinja2 import Template
 from collections import defaultdict
 from pprint import pprint
+from datetime import datetime
 import csv
 
 if __name__ == '__main__':
@@ -108,3 +109,31 @@ if __name__ == '__main__':
 		device.disconnect()
 
 	# Update source of truth file
+	with open(args.sot, newline='') as sot_file:
+		sot = csv.DictReader(sot_file)
+
+		now = datetime.now()
+		report_filename = f'{now.strftime("%Y-%m-%d-%H-%M-%S")}_interface_config_report.csv'
+
+		# Create a list of field headers for the report
+		report_headers = sot.fieldnames + ['Old Description','New description']
+
+		# Open report file
+		print(f'Writing report to {report_filename}')
+
+		with open(report_filename, 'w', newline='') as report_file:
+			writer = csv.DictWriter(report_file, fieldnames=report_headers)
+
+			writer.writeheader()
+
+			# Read a line from SoT file
+			for line in sot:
+				try:
+					line['Old Description'] = \
+						interface_details[line['Device Name']].info[line['Interface']]['description']
+				except KeyError:
+					# Interface does not have a description
+					line['Old Description'] = ''
+
+				# Write that line, plus the new fields
+				writer.writerow(line)
