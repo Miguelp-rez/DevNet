@@ -78,16 +78,17 @@ if __name__ == '__main__':
 		except KeyError as e:
 			print(f'Error: Device {device} is not in the testbed')
 
+	# Debugging information
 	# Display current interface descriptions
 	# {device : <interface_object> }
-	for device, interfaces in interface_details.items():
-		print(f'Current configuration for device {device}')
-		for interface, details in interfaces.info.items():
-			try:
-				print(f'Interface {interface} {details["description"]}')
-			except KeyError:
-				print(f'Interface {interface} does not have a description')
-		print('!\n')
+	#for device, interfaces in interface_details.items():
+	#	print(f'Current configuration for device {device}')
+	#	for interface, details in interfaces.info.items():
+	#		try:
+	#			print(f'Interface {interface} {details["description"]}')
+	#		except KeyError:
+	#			print(f'Interface {interface} does not have a description')
+	#	print('!\n')
 
 	# Display the config commands for the user to review
 	# {device : {interface01 : 'config_commands', interface02 : config_commands ...}}
@@ -97,11 +98,29 @@ if __name__ == '__main__':
 			print(configuration)
 		print('!\n')
 
-	# Apply new interface descriptions
-	if args.apply:
-		# Confirm if the user truly wants to apply the configuration
-		print('Applying configurations')
-	
+		# Apply new interface descriptions
+		if args.apply:
+			# Confirm if the user truly wants to apply the configuration
+			confirm = input(f'Do you want to apply configuration to {device}? (y/n) ')
+			if confirm == 'y':
+				if device in testbed.devices:
+					print(f'Applying configurations to {device}')
+					# Many errors can ocurr when sending commands
+					try:
+						# Send all config commands at once
+						output = testbed.devices[device].configure(
+							'\n'.join(interfaces.values())
+							)
+						# Debugging information
+						print(output)
+					except Exception as e:
+						print(f'Error applying configuration to {device}')
+						print(e)
+				else:
+					print(f'Error: Device {device} is not in the testbed')
+		print('\n--------------------------------------\n')
+
+
 	# Run cdp/lldp commands to grab neighbor information
 	# Check if devices are actually connected to the interfaces listed in CSV file.
 	
