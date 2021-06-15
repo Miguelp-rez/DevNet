@@ -33,6 +33,8 @@ if __name__ == '__main__':
 		'--sot', required= True, type=str, help='Source of truth filename')
 	parser.add_argument(
 		'--apply', action='store_true', help='If set, configurations are applied.')
+	parser.add_argument(
+		'--check', action='store_true', help='If set, compare lldp neighbors against the SoT file')
 	
 	args = parser.parse_args()
 
@@ -120,10 +122,31 @@ if __name__ == '__main__':
 					print(f'Error: Device {device} is not in the testbed')
 		print('\n--------------------------------------\n')
 
+	if args.check:
+		print('Checking lldp neighbors against the SoT file')
+		# Enable lldp
+		# Only work with devices in the SoT file
+		for device in devices_config:
+			if device in testbed.devices:
+				print(f'Enabling lldp on device {device}')
+				# Many errors can occurr while sending commands
+				try:
+					testbed.devices[device].api.configure_lldp()
+					# Wait for neighbor relationships to form
+				except Exception as e:
+					print(f'Error: failed to enable lldp on {device}')
+					# Debugging information
+					print(e)
+			else:
+				print(f'Device {device} is not in the testbed')
 
-	# Run cdp/lldp commands to grab neighbor information
-	# Check if devices are actually connected to the interfaces listed in CSV file.
-	
+		
+		# Run cdp/lldp commands to grab neighbor information
+		# Check if devices are actually connected to the interfaces listed in CSV file.
+		# 	Correct - lldp neighbors match the sot file
+		# 	Incorrect - lldp neighbors differ from the sot file
+		# 	Unknown - lldp information is not available
+
 	# Disconnect from all devices
 	for device in testbed.devices.values():
 		print(f'Disconnecting from {device.name}')
