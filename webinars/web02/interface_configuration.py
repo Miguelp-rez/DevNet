@@ -18,7 +18,7 @@ if __name__ == '__main__':
 	import argparse
 	
 	# Interface description commands
-	device_config = defaultdict(dict)
+	devices_config = defaultdict(dict)
 
 	# Output from learn interface model
 	interface_details = {}
@@ -49,7 +49,7 @@ if __name__ == '__main__':
 			# Remove empty rows
 			if row['Device Name']:
 				# Create interface descriptions from template
-				device_config[row['Device Name']][row['Interface']] = \
+				devices_config[row['Device Name']][row['Interface']] = \
 					interface_template.render(
 						interface_name = row['Interface'],
 						connected_device = row['Connected Device'],
@@ -58,10 +58,11 @@ if __name__ == '__main__':
 						)
 
 	#print("Config commands generated")
-	#pprint(device_config)
+	#pprint(devices_config)
 	
 	# Display the config commands for the user to review
-	for device, interfaces in device_config.items():
+	# {device : {interface01 : 'config_commands', interface02 : config_commands ...}}
+	for device, interfaces in devices_config.items():
 		print(f'Device {device}')
 		for interface, configuration in interfaces.items():
 			print(configuration)
@@ -75,15 +76,24 @@ if __name__ == '__main__':
 	print(f'Connecting to all devices in {testbed.name}')
 	testbed.connect(log_stdout=False)
 
-	# Grab current interface descriptions
-	for device in device_config.keys():
+	# Grab current interface descriptions for devices in the SoT file
+	for device in devices_config.keys():
 		try:
 			print(f'Learning current interface configuration for device {device}')
 			interface_details[device] = testbed.devices[device].learn('interface')
 		except KeyError as e:
 			print(f'Error: Device {device} is not in the testbed')
 
-	pprint(interface_details)
+	# Display current interface descriptions
+	# {device : <interface_object> }
+	for device, interfaces in interface_details.items():
+		print(f'Device {device}')
+		for interface, details in interfaces.info.items():
+			try:
+				print(f'Interface {interface} {details["description"]}')
+			except KeyError:
+				print(f'Interface {interface} does not have a description')
+		print('!\n')
 
 	# Apply new interface descriptions
 	if args.apply:
