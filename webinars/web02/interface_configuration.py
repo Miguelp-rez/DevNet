@@ -49,7 +49,7 @@ if __name__ == '__main__':
 		for row in sot:
 			# Remove empty rows
 			if row['Device Name']:
-				# Create interface descriptions from template
+				# Create interface descriptions commands from the template
 				devices_config[row['Device Name']][row['Interface']] = \
 					interface_template.render(
 						interface_name = row['Interface'],
@@ -58,17 +58,10 @@ if __name__ == '__main__':
 						purpose = row['Purpose']
 						)
 
+	# Debuggin information
 	#print("Config commands generated")
 	#pprint(devices_config)
 	
-	# Display the config commands for the user to review
-	# {device : {interface01 : 'config_commands', interface02 : config_commands ...}}
-	for device, interfaces in devices_config.items():
-		print(f'Device {device}')
-		for interface, configuration in interfaces.items():
-			print(configuration)
-		print('!\n')
-
 	# Load testbed file
 	print(f'Loading {args.testbed}')
 	testbed = load(args.testbed)
@@ -88,7 +81,7 @@ if __name__ == '__main__':
 	# Display current interface descriptions
 	# {device : <interface_object> }
 	for device, interfaces in interface_details.items():
-		print(f'Device {device}')
+		print(f'Current configuration for device {device}')
 		for interface, details in interfaces.info.items():
 			try:
 				print(f'Interface {interface} {details["description"]}')
@@ -96,14 +89,23 @@ if __name__ == '__main__':
 				print(f'Interface {interface} does not have a description')
 		print('!\n')
 
+	# Display the config commands for the user to review
+	# {device : {interface01 : 'config_commands', interface02 : config_commands ...}}
+	for device, interfaces in devices_config.items():
+		print(f'New configurations for device {device}')
+		for interface, configuration in interfaces.items():
+			print(configuration)
+		print('!\n')
+
 	# Apply new interface descriptions
 	if args.apply:
+		# Confirm if the user truly wants to apply the configuration
 		print('Applying configurations')
+	
 	# Run cdp/lldp commands to grab neighbor information
 	# Check if devices are actually connected to the interfaces listed in CSV file.
 	
 	# Disconnect from all devices
-	
 	for device in testbed.devices.values():
 		print(f'Disconnecting from {device.name}')
 		device.disconnect()
