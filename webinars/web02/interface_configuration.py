@@ -206,19 +206,20 @@ if __name__ == '__main__':
 							connected_interface = row['Connected Interface']
 							# Check if port_id matches information in the SoT
 							if connected_interface in lldp_info[device]['interfaces'][interface]['port_id'].keys():
-								test_results[device][interface] = 'Correct'
-							# Check if neighbor hostname matches information in the SoT
-							if  connected_device in lldp_info[device]['interfaces'][interface]['port_id'][connected_interface].keys():
-								test_results[device][interface] = 'Correct'
+								# Check if neighbor hostname matches information in the SoT
+								if  connected_device in lldp_info[device]['interfaces'][interface]['port_id'][connected_interface]['neighbors'].keys():
+									test_results[device][interface] = 'Correct'
+							else:
+								test_results[device][interface] = 'Incorrect'
 						else:
 							print(f'Interface {interface} does not have any neighbor relationships')
 							test_results[device][interface] = 'Unknown - No LLDP neighbor info'
 					else:
 						print(f'LLDP is not enabled for device {device}')
-						test_results[device][interface] = 'Unknown - LLDP is not enabled'
-					
+						test_results[device][row['Interface']] = 'Unknown - LLDP is not enabled'
 				else:
 					print('Blank row')
+					test_results[device][row['Interface']] = ''
 
 		pprint(test_results)
 
