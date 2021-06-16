@@ -13,6 +13,7 @@ from jinja2 import Template
 from collections import defaultdict
 from pprint import pprint
 from datetime import datetime
+from time import sleep
 import csv
 
 if __name__ == '__main__':
@@ -124,15 +125,18 @@ if __name__ == '__main__':
 
 	if args.check:
 		print('Checking lldp neighbors against the SoT file')
+		# Output from the show lldp neighbors detail parser
+		lldp_info = {}
+
 		# Enable lldp
 		# Only work with devices in the SoT file
+		
 		for device in devices_config:
 			if device in testbed.devices:
 				print(f'Enabling lldp on device {device}')
 				# Many errors can occurr while sending commands
 				try:
 					testbed.devices[device].api.configure_lldp()
-					# Wait for neighbor relationships to form
 				except Exception as e:
 					print(f'Error: failed to enable lldp on {device}')
 					# Debugging information
@@ -140,12 +144,70 @@ if __name__ == '__main__':
 			else:
 				print(f'Device {device} is not in the testbed')
 
+		# Wait for neighbor relationships to form
+		print('Waiting for neighbor relationships to form...')
+		sleep(60)
 		
-		# Run cdp/lldp commands to grab neighbor information
+		for device in devices_config:
+			if device in testbed.devices:
+				print(f'Learning lldp neighbors of device {device}')
+				
+				# Run cdp/lldp commands to grab neighbor information
+				try:
+					lldp_info[device] = testbed.devices[device].parse(
+						'show lldp neighbors detail')					
+				except Exception as e:
+					print(f'Error while running lldp commands on {device}')
+					# Debugging information
+					print(e)
+			else:
+				print(f'Device {device} is not in the testbed')
+		
+		# Debuggin information
+		# pprint(lldp_info)
+		# device :
+		# {
+		#	'interfaces' : 
+		#	{
+		#		interfaceX : 
+		#		{
+		#			'port-id' : 
+		#			{
+		#				portX : 
+		#				{
+		#					'neighbors' : 
+		#					{
+		#						hostnameX : {more_stuff}
+		#					}
+		#				}
+		#			}
+		#		}
+		#	}
+		# {
+
 		# Check if devices are actually connected to the interfaces listed in CSV file.
 		# 	Correct - lldp neighbors match the sot file
 		# 	Incorrect - lldp neighbors differ from the sot file
 		# 	Unknown - lldp information is not available
+
+		with open(args.sot, newline='') as sot_file:
+			sot = csv.DictReader(sot_file)
+			for row in sot:
+				device = row['Device Name']
+				# Ignore blank rows and devices with no lldp entry
+				if device:
+					if device in lldp_info.keys():
+						interface = row['Interface']
+						if interface in lldp_info[device]['interfaces'].keys():
+							# Grab neighbor port and neighbor name
+							pass
+						else:
+							print(f'Interface {interface} does not have any neighbor relationships')
+					else:
+						print(f'LLDP is not enabled for device {device}')
+					
+				else:
+					print('Blank row')
 
 	# Disconnect from all devices
 	for device in testbed.devices.values():
