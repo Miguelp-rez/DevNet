@@ -146,7 +146,7 @@ if __name__ == '__main__':
 
 		# Wait for neighbor relationships to form
 		print('Waiting for neighbor relationships to form...')
-		sleep(40)
+		sleep(30)
 		
 		for device in devices_config:
 			if device in testbed.devices:
@@ -219,7 +219,6 @@ if __name__ == '__main__':
 						test_results[device][row['Interface']] = 'Unknown - LLDP is not enabled'
 				else:
 					print('Blank row')
-					test_results[device][row['Interface']] = ''
 
 		pprint(test_results)
 
@@ -236,7 +235,11 @@ if __name__ == '__main__':
 		report_filename = f'{now.strftime("%Y-%m-%d-%H-%M-%S")}_interface_config_report.csv'
 
 		# Create a list of field headers for the report
-		report_headers = sot.fieldnames + ['Old Description','New description']
+		report_headers = sot.fieldnames + ['Old Description']
+
+		# Add a new header for lldp neighbor test results
+		if args.check:
+			report_headers.append('LLDP neighbor test')
 
 		# Open report file
 		print(f'Writing report to {report_filename}')
@@ -254,6 +257,13 @@ if __name__ == '__main__':
 				except KeyError:
 					# Interface does not have a description
 					line['Old Description'] = ''
+
+				try:
+					line['LLDP neighbor test'] = \
+						test_results[line['Device Name']][line['Interface']]
+				except KeyError as e:
+					# Empty line
+					line['LLDP neighbor test'] = ''
 
 				# Write that line, plus the new fields
 				writer.writerow(line)
