@@ -11,7 +11,7 @@ Goal:
 from pyats.topology.loader import load
 from jinja2 import Template
 from collections import defaultdict
-# from pprint import pprint
+from pprint import pprint
 from datetime import datetime
 from time import sleep
 import csv
@@ -209,6 +209,8 @@ if __name__ == '__main__':
 								# Check if neighbor hostname matches information in the SoT
 								if  connected_device in lldp_info[device]['interfaces'][interface]['port_id'][connected_interface]['neighbors'].keys():
 									test_results[device][interface] = 'Correct'
+								else:
+									test_results[device][interface] = 'Incorrect'
 							else:
 								test_results[device][interface] = 'Incorrect'
 						else:
