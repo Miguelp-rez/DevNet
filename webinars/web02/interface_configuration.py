@@ -11,7 +11,7 @@ Goal:
 from pyats.topology.loader import load
 from jinja2 import Template
 from collections import defaultdict
-from pprint import pprint
+# from pprint import pprint
 from datetime import datetime
 from time import sleep
 import csv
@@ -96,7 +96,7 @@ if __name__ == '__main__':
 	# Display the config commands for the user to review
 	# {device : {interface01 : 'config_commands', interface02 : config_commands ...}}
 	for device, interfaces in devices_config.items():
-		print(f'New configurations for device {device}')
+		print(f'\nNew configurations for device {device}')
 		for interface, configuration in interfaces.items():
 			print(configuration)
 		print('!\n')
@@ -115,13 +115,13 @@ if __name__ == '__main__':
 							'\n'.join(interfaces.values())
 							)
 						# Debugging information
-						print(output)
+						# print(output)
 					except Exception as e:
-						print(f'Error applying configuration to {device}')
+						print(f'Error: Configuration to {device} failed')
 						print(e)
 				else:
 					print(f'Error: Device {device} is not in the testbed')
-		print('\n--------------------------------------\n')
+		print('\n--------------------------------------')
 
 	if args.check:
 		print('Checking lldp neighbors against the SoT file')
@@ -138,14 +138,14 @@ if __name__ == '__main__':
 				try:
 					testbed.devices[device].api.configure_lldp()
 				except Exception as e:
-					print(f'Error: failed to enable lldp on {device}')
+					print(f'Error: Failed to enable lldp on {device}')
 					# Debugging information
 					print(e)
 			else:
-				print(f'Device {device} is not in the testbed')
+				print(f'Error: Device {device} is not in the testbed')
 
 		# Wait for neighbor relationships to form
-		print('Waiting for neighbor relationships to form...')
+		print('\nWaiting for neighbor relationships to form...\n')
 		sleep(30)
 		
 		for device in devices_config:
@@ -157,11 +157,11 @@ if __name__ == '__main__':
 					lldp_info[device] = testbed.devices[device].parse(
 						'show lldp neighbors detail')					
 				except Exception as e:
-					print(f'Error while running lldp commands on {device}')
+					print(f'Error: Failed to run lldp commands on {device}')
 					# Debugging information
 					print(e)
 			else:
-				print(f'Device {device} is not in the testbed')
+				print(f'Error: Device {device} is not in the testbed')
 		
 		# Debuggin information
 		# pprint(lldp_info)
@@ -212,15 +212,14 @@ if __name__ == '__main__':
 							else:
 								test_results[device][interface] = 'Incorrect'
 						else:
-							print(f'Interface {interface} does not have any neighbor relationships')
+							print(f'WARNING: Device {device} {interface} does not have any neighbor relationships')
 							test_results[device][interface] = 'Unknown - No LLDP neighbor info'
 					else:
-						print(f'LLDP is not enabled for device {device}')
+						print(f'WARNING: LLDP is not enabled for device {device}')
 						test_results[device][row['Interface']] = 'Unknown - LLDP is not enabled'
-				else:
-					print('Blank row')
 
-		pprint(test_results)
+		# Debugging information
+		# pprint(test_results)
 
 	# Disconnect from all devices
 	for device in testbed.devices.values():
