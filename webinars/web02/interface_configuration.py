@@ -146,7 +146,7 @@ if __name__ == '__main__':
 
 		# Wait for neighbor relationships to form
 		print('Waiting for neighbor relationships to form...')
-		sleep(60)
+		sleep(40)
 		
 		for device in devices_config:
 			if device in testbed.devices:
@@ -190,6 +190,7 @@ if __name__ == '__main__':
 		# 	Incorrect - lldp neighbors differ from the sot file
 		# 	Unknown - lldp information is not available
 
+		test_results = defaultdict(dict)
 		with open(args.sot, newline='') as sot_file:
 			sot = csv.DictReader(sot_file)
 			for row in sot:
@@ -203,8 +204,10 @@ if __name__ == '__main__':
 							pass
 						else:
 							print(f'Interface {interface} does not have any neighbor relationships')
+							test_results[device][interface] = 'Unknown - No LLDP neighbor info'
 					else:
 						print(f'LLDP is not enabled for device {device}')
+						test_results[device][interface] = 'Unknown - LLDP is not enabled'
 					
 				else:
 					print('Blank row')
