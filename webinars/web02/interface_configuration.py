@@ -197,11 +197,19 @@ if __name__ == '__main__':
 				device = row['Device Name']
 				# Ignore blank rows and devices with no lldp entry
 				if device:
+					# Ignore devices without an lldp entry
 					if device in lldp_info.keys():
 						interface = row['Interface']
+						# Ignore interfaces that does not have neighbor relationships
 						if interface in lldp_info[device]['interfaces'].keys():
-							# Grab neighbor port and neighbor name
-							pass
+							connected_device = row['Connected Device']
+							connected_interface = row['Connected Interface']
+							# Check if port_id matches information in the SoT
+							if connected_interface in lldp_info[device]['interfaces'][interface]['port_id'].keys():
+								test_results[device][interface] = 'Correct'
+							# Check if neighbor hostname matches information in the SoT
+							if  connected_device in lldp_info[device]['interfaces'][interface]['port_id'][connected_interface].keys():
+								test_results[device][interface] = 'Correct'
 						else:
 							print(f'Interface {interface} does not have any neighbor relationships')
 							test_results[device][interface] = 'Unknown - No LLDP neighbor info'
@@ -211,6 +219,8 @@ if __name__ == '__main__':
 					
 				else:
 					print('Blank row')
+
+		pprint(test_results)
 
 	# Disconnect from all devices
 	for device in testbed.devices.values():
