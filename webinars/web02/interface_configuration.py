@@ -205,14 +205,19 @@ if __name__ == '__main__':
 							connected_device = row['Connected Device']
 							connected_interface = row['Connected Interface']
 							# Check if port_id matches information in the SoT
-							if connected_interface in lldp_info[device]['interfaces'][interface]['port_id'].keys():
+							neighbor_interface = lldp_info[device]['interfaces'][interface]['port_id'].keys()
+							if connected_interface in neighbor_interface:
 								# Check if neighbor hostname matches information in the SoT
-								if  connected_device in lldp_info[device]['interfaces'][interface]['port_id'][connected_interface]['neighbors'].keys():
+								neighbor_hostname = lldp_info[device]['interfaces'][interface]['port_id'][connected_interface]['neighbors'].keys()
+								if  connected_device in neighbor_hostname:
 									test_results[device][interface] = 'Correct'
 								else:
-									test_results[device][interface] = 'Incorrect'
+									# In some cases lldp neighbor_name differs from the SoT because
+									# neighbor_name = core-rtr01.virl.info 
+									# connected_device = core-rtr01
+									test_results[device][interface] = 'Incorrect - connected to ' + (list(neighbor_hostname)[0])
 							else:
-								test_results[device][interface] = 'Incorrect'
+								test_results[device][interface] = 'Incorrect - connected to ' + (list(neighbor_interface)[0])
 						else:
 							print(f'WARNING: Device {device} {interface} does not have any neighbor relationships')
 							test_results[device][interface] = 'Unknown - No LLDP neighbor info'
