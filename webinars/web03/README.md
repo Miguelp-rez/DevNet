@@ -40,11 +40,11 @@ Create a testbed file from the inventory spreadsheet.
      --path nso_sandbox_devices.xlsx\
      --output nso_sandbox_testbed.yaml
 
-Authenticate to the API
+Authenticate to the API.
 
     POST https://sandboxapicdc.cisco.com/api/aaaLogin.json
 
-In the body include the credentials
+Include the following credentials in the body of the POST request.
 
     {
         "aaaUser": {
