@@ -58,6 +58,10 @@ Include the following credentials in the body of the POST request.
 Make the following API calls with postman.
 
 	GET https://sandboxapicdc.cisco.com/api/node/class/fabricNode.json
-    GET https://sandboxapicdc.cisco.com/api/node/class/topology/pod-1/topSystem.json
-    GET https://sandboxapicdc.cisco.com/api/mo/topology/pod-1/node-101.json?query-target=children&target-subtree-class=topSystem
+    GET https://sandboxapicdc.cisco.com/api/node/class/firmwareRunning.json
+    GET https://sandboxapicdc.cisco.com/api/node/class/topSystem.json
 
+You can include the dn of a node in the URI to get details of each object.
+
+    GET https://sandboxapicdc.cisco.com/api/node/class/topology/pod-1/node-201/firmwareRunning.json
+    GET https://sandboxapicdc.cisco.com/api/node/class/topology/pod-1/node-201/topSystem.json
