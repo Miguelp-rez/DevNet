@@ -61,7 +61,7 @@ Make the following API calls with postman.
     GET https://sandboxapicdc.cisco.com/api/node/class/firmwareRunning.json
     GET https://sandboxapicdc.cisco.com/api/node/class/topSystem.json
 
-You can include the dn of a node in the URI to get details of each object.
+You can include the dn of a node in the URI to only include datails of that object.
 
     GET https://sandboxapicdc.cisco.com/api/node/class/topology/pod-1/node-101/firmwareRunning.json
     GET https://sandboxapicdc.cisco.com/api/node/class/topology/pod-1/node-101/topSystem.json
@@ -70,4 +70,3 @@ Similarly, you can use query filters to get equivalent results.
 
     GET https://sandboxapicdc.cisco.com/api/node/mo/topology/pod-1/node-101.json?query-target=subtree&target-subtree-class=firmwareRunning
     GET https://sandboxapicdc.cisco.com/api/node/mo/topology/pod-1/node-101.json?query-target=children&target-subtree-class=topSystem
-    
