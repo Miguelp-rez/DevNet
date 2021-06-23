@@ -61,7 +61,7 @@ Make the following API calls with postman.
     GET https://sandboxapicdc.cisco.com/api/node/class/firmwareRunning.json
     GET https://sandboxapicdc.cisco.com/api/node/class/topSystem.json
 
-You can include the dn of a node in the URI to only include datails of that object.
+You can include the dn of a node in the URI to only grab datails of that object.
 
     GET https://sandboxapicdc.cisco.com/api/node/class/topology/pod-1/node-101/firmwareRunning.json
     GET https://sandboxapicdc.cisco.com/api/node/class/topology/pod-1/node-101/topSystem.json
