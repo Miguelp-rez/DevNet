@@ -23,6 +23,8 @@ Download and install [postman](https://www.postman.com/downloads/)
 
 ## Activities
 
+#### Environment
+
 Create a python virtual environment.
 
     python3 -m venv venv
@@ -39,6 +41,8 @@ Create a testbed file from the inventory spreadsheet.
     pyats create testbed file\
      --path nso_sandbox_devices.xlsx\
      --output nso_sandbox_testbed.yaml
+
+#### ACI
 
 Authenticate to the API.
 
@@ -61,7 +65,7 @@ Make the following API calls with postman.
     GET https://sandboxapicdc.cisco.com/api/node/class/firmwareRunning.json
     GET https://sandboxapicdc.cisco.com/api/node/class/topSystem.json
 
-You can include the dn of a node in the URI to only grab datails of that object.
+You can include the dn of a node in the URI to only get datails of that object.
 
     GET https://sandboxapicdc.cisco.com/api/node/class/topology/pod-1/node-101/firmwareRunning.json
     GET https://sandboxapicdc.cisco.com/api/node/class/topology/pod-1/node-101/topSystem.json
@@ -70,3 +74,24 @@ Similarly, you can use query filters to get equivalent results.
 
     GET https://sandboxapicdc.cisco.com/api/node/mo/topology/pod-1/node-101.json?query-target=subtree&target-subtree-class=firmwareRunning
     GET https://sandboxapicdc.cisco.com/api/node/mo/topology/pod-1/node-101.json?query-target=children&target-subtree-class=topSystem
+
+#### SD-WAN
+
+Authenticate to the API. The Sandbox is currently running vManage 19.2, so only the jsessionid cookie is needed.
+
+    POST https://sandbox-sdwan-1.cisco.com/j_security_check
+    Content-Type: application/x-www-form-urlencoded  
+
+Include the following credentials in the body of the POST request.
+
+    j_username=devnetuser
+    j_password=RG!_Yw919_83
+
+Make the following API call.
+
+    GET https://sandbox-sdwan-1.cisco.com/dataservice/device
+    Content-Type: application/json
+
+Log out after finishing the API requests.
+
+    GET https://sandbox-sdwan-1.cisco.com/logout
