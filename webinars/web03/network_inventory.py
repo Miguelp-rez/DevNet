@@ -23,15 +23,6 @@ from datetime import datetime
 import csv
 
 """
-Plan for SDN inventory
-1 Add command line arguments for details of the ACI and SD-WAN controllers.
-2 Ask the user for credentials (if needed)
-3 Authenticate to the APIs
-4 Make HTTP GET requests to gather data from the APIs.
-5 Update report 
-"""
-
-"""
 This function is used to look for information between two substrings
 It only returns the first coincidence inside another string called 'text'.
 """
@@ -111,22 +102,36 @@ def get_inventory(device, show_version, show_inventory):
 	if device_os == 'iosxr':
 		software_version = show_version[hostname]['output']['software_version']
 		uptime = show_version[hostname]['output']['uptime']
-		serial_number = show_inventory[hostname]['output']['module_name']['0/0/CPU0']['sn']
+		# show_inventory is empty
+		try:
+			serial_number = show_inventory[hostname]['output']['module_name']['0/0/CPU0']['sn']
+		except:
+			serial_number = 'N/A'
 	elif device_os == 'iosxe':
 		model = show_version[hostname]['output']['version']['chassis']
 		software_version = show_version[hostname]['output']['version']['version']
 		uptime = show_version[hostname]['output']['version']['uptime']
-		serial_number = show_inventory[hostname]['output']['main']['chassis'][model]['sn']
+		# show_inventory is empty
+		try:
+			serial_number = show_inventory[hostname]['output']['main']['chassis'][model]['sn']
+		except:
+			serial_number = 'N/A'
 	elif device_os == 'nxos':
 		software_version = show_version[hostname]['output']['platform']['software']['system_version']
 		uptime_dic = show_version[hostname]['output']['platform']['kernel_uptime']
 		uptime = f"{uptime_dic['days']} days, {uptime_dic['hours']} hours, {uptime_dic['minutes']} minutes"
-		serial_number = show_inventory[hostname]['output']['name']['Chassis']['serial_number']
+		try:
+			serial_number = show_inventory[hostname]['output']['name']['Chassis']['serial_number']
+		except:
+			serial_number = 'N/A'
 	elif device_os == 'asa':
 		raw_output = show_version[hostname]['output']
 		software_version = search_between('Software Version ', '\r\n', raw_output)
 		uptime = search_between(f'{hostname} up ', '\r\n', raw_output)
-		serial_number = show_inventory[hostname]['output']['Chassis']['sn']
+		try:
+			serial_number = show_inventory[hostname]['output']['Chassis']['sn']
+		except:
+			serial_number = 'N/A'
 	elif device_os == 'ios':
 		software_version = show_version[hostname]['output']['version']['version']
 		uptime = show_version[hostname]['output']['version']['uptime']
