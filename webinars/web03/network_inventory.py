@@ -21,6 +21,7 @@ from genie.metaparser.util.exceptions import SchemaEmptyParserError
 from genie.libs.parser.utils.common import ParserNotFound
 from datetime import datetime
 from getpass import getpass
+from urllib3 import disable_warnings, exceptions
 import requests
 import csv
 
@@ -33,12 +34,50 @@ Plan for SDN inventory
 5 Update report 
 """
 
+
+"""
+This function authenticates to the ACI REST API.
+If an error ocurrs, it returns False.
+"""
+def auth_aci(aci_address, aci_username, aci_password):
+	# Build URL
+	url = f'https://{aci_address}/api/aaaLogin.json'
+	# Build credentials dictionary
+	body = {
+			    "aaaUser": {
+			        "attributes" : {
+			            "name" : aci_username,
+			            "pwd" : aci_password
+			        }
+			    }
+			}
+
+	# Make request
+	try:
+		reponse = requests.post(url, json=body, verify=False)
+		# Return token
+		if reponse.status_code == 200:
+			return reponse.json()['imdata'][0]['aaaLogin']['attributes']['token']
+	except Exception as e:
+		print('Unable to authenticate to the ACI REST API')
+		print(e)
+		return False
+	
+	# Return token
 """
 This function gathers information from the ACI to build a network 
 inventory report. If an error ocurrs, it returns False.
 """
 def get_aci_info(aci_address, aci_username, aci_password):
 	# Authenticate to the API
+	token = auth_aci(aci_address, aci_username, aci_password)
+	# Debugging information
+	print(f'aci: {token}')
+	
+	# Error handling
+	if not token:
+		print(f'Unable to authenticate to {aci_address}')
+		return False
 	# Make HTTP GET requests
 	# Proccess the data and return a tuple
 	return False
@@ -200,6 +239,10 @@ if __name__ == '__main__':
 	# Load testbed file
 	print(f'Loading {args.testbed} file')
 	testbed = load(args.testbed)
+
+	# It is very common that network devices use self-signed certificates, 
+	# which would stop the program from working.
+	disable_warnings(exceptions.InsecureRequestWarning)
 
 	if args.aci_address:
 		print(f'\nConnecting to {args.aci_address}')
