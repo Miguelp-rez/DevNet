@@ -23,6 +23,15 @@ from datetime import datetime
 import csv
 
 """
+Plan for SDN inventory
+1 Add command line arguments for details of the ACI and SD-WAN controllers.
+2 Ask the user for credentials (if needed)
+3 Authenticate to the APIs
+4 Make HTTP GET requests to gather data from the APIs.
+5 Update report 
+"""
+
+"""
 This function is used to look for information between two substrings
 It only returns the first coincidence inside another string called 'text'.
 """
