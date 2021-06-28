@@ -21,6 +21,7 @@ from genie.metaparser.util.exceptions import SchemaEmptyParserError
 from genie.libs.parser.utils.common import ParserNotFound
 from datetime import datetime
 from getpass import getpass
+import requests
 import csv
 
 """
@@ -31,6 +32,26 @@ Plan for SDN inventory
 4 Make HTTP GET requests to gather data from the APIs.
 5 Update report 
 """
+
+"""
+This function gathers information from the ACI to build a network 
+inventory report. If an error ocurrs, it returns False.
+"""
+def get_aci_info(aci_address, aci_username, aci_password):
+	# Authenticate to the API
+	# Make HTTP GET requests
+	# Proccess the data and return a tuple
+	return False
+
+"""
+This function gathers information from the SD-WAN to build a network 
+inventory report. If an error ocurrs, it returns False.
+"""
+def get_sdwan_info(sdwan_address, sdwan_username, sdwan_password):
+	# Authenticate to the API
+	# Make HTTP GET requests
+	# Process the data and return a tuple
+	return False
 
 """
 This function is used to look for information between two substrings
@@ -180,21 +201,31 @@ if __name__ == '__main__':
 	print(f'Loading {args.testbed} file')
 	testbed = load(args.testbed)
 
-	# Connect to all devices, but silent logs
-	print(f'Connecting to all devices in {testbed.name}')
-	testbed.connect(log_stdout=False)
-
 	if args.aci_address:
-		print(f'Connecting to {args.aci_address}')
+		print(f'\nConnecting to {args.aci_address}')
+		# Read credentials from the user
 		aci_username = input(f'What is the username for {args.aci_address}? ')
 		aci_password = getpass(f'Enter the password (input will be hidden): ')
 	
-	print('')
+		aci_info = get_aci_info(args.aci_address, aci_username, aci_password)
 
+		# Debugging information
+		print(aci_info)
+	
 	if args.sdwan_address: 
-		print(f'Connecting to {args.sdwan_address}')
+		print(f'\nConnecting to {args.sdwan_address}')
+		# Read credentials from the user
 		sdwan_username = input(f'What is the username for {args.sdwan_address}? ')
 		sdwan_password = getpass(f'Enter the password (input will be hidden): ')
+
+		sdwan_info = get_sdwan_info(args.sdwan_address, sdwan_username, sdwan_password)
+
+		# Debugging information
+		print(sdwan_info)
+
+	# Connect to all devices, but silent logs
+	print(f'\nConnecting to all devices in {testbed.name}')
+	testbed.connect(log_stdout=False)
 
 	# testbed.devices = { hostname : <Device object> }
 	for device in testbed.devices.values():
