@@ -20,6 +20,7 @@ from pyats.topology.loader import load
 from genie.metaparser.util.exceptions import SchemaEmptyParserError
 from genie.libs.parser.utils.common import ParserNotFound
 from datetime import datetime
+from getpass import getpass
 import csv
 
 """
@@ -185,9 +186,15 @@ if __name__ == '__main__':
 
 	if args.aci_address:
 		print(f'Connecting to {args.aci_address}')
+		aci_username = input(f'What is the username for {args.aci_address}? ')
+		aci_password = getpass(f'Enter the password (input will be hidden): ')
+	
+	print('')
 
 	if args.sdwan_address: 
 		print(f'Connecting to {args.sdwan_address}')
+		sdwan_username = input(f'What is the username for {args.sdwan_address}? ')
+		sdwan_password = getpass(f'Enter the password (input will be hidden): ')
 
 	# testbed.devices = { hostname : <Device object> }
 	for device in testbed.devices.values():
