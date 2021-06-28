@@ -86,11 +86,27 @@ def get_aci_info(aci_address, aci_username, aci_password):
 	fabricNode = requests.get(fabric_url, cookies=cookies, verify=False)
 	
 	# Debugging information
-	print(f'Response status: {fabricNode.status_code}')
-	print(f'Response body: {fabricNode.text}')
+	#print(f'Response status: {fabricNode.status_code}')
+	#print(f'Response body: {fabricNode.text}')
 
 	# Proccess the data and return a tuple
-	return False
+	if fabricNode.status_code != 200:
+		print('Error: Failed to get fabricNode information')
+	else:
+		# Loop over each node in the fabric
+		nodes = fabricNode.json()['imdata']
+		for node in nodes:
+			hostname = node['fabricNode']['attributes']['name']
+			model = node['fabricNode']['attributes']['model']
+			serial_number = node['fabricNode']['attributes']['serial']
+			dn = node['fabricNode']['attributes']['dn']
+
+			# Firmware
+			software_version = None
+
+			# Uptime
+			uptime = None
+			return (hostname, f'apic-{model}', software_version, uptime, serial_number)
 
 """
 This function gathers information from the SD-WAN to build a network 
