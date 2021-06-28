@@ -167,7 +167,12 @@ if __name__ == '__main__':
 
 	# Read testbed filename
 	parser = argparse.ArgumentParser(description='testing pyATS')
-	parser.add_argument('testbed', type=str, help='pyATS testbed filename')
+	parser.add_argument('testbed', type=str, 
+		help='pyATS testbed filename')
+	parser.add_argument('--aci-address', type=str, 
+		help='IP addres of the APIC')
+	parser.add_argument('--sdwan-address', type=str, 
+		help='IP address of the SD-WAN controller')
 	args = parser.parse_args()
 
 	# Load testbed file
@@ -177,6 +182,12 @@ if __name__ == '__main__':
 	# Connect to all devices, but silent logs
 	print(f'Connecting to all devices in {testbed.name}')
 	testbed.connect(log_stdout=False)
+
+	if args.aci_address:
+		print(f'Connecting to {args.aci_address}')
+
+	if args.sdwan_address: 
+		print(f'Connecting to {args.sdwan_address}')
 
 	# testbed.devices = { hostname : <Device object> }
 	for device in testbed.devices.values():
