@@ -72,13 +72,23 @@ def get_aci_info(aci_address, aci_username, aci_password):
 	# Authenticate to the API
 	token = auth_aci(aci_address, aci_username, aci_password)
 	# Debugging information
-	print(f'aci: {token}')
+	print(f'APIC-cookie={token}')
 	
 	# Error handling
 	if not token:
 		print(f'Unable to authenticate to {aci_address}')
 		return False
-	# Make HTTP GET requests
+
+	cookies = {'APIC-cookie' : token}
+
+	# Make HTTP GET requests	
+	fabric_url = f'https://{aci_address}/api/node/class/fabricNode.json'
+	fabricNode = requests.get(fabric_url, cookies=cookies, verify=False)
+	
+	# Debugging information
+	print(f'Response status: {fabricNode.status_code}')
+	print(f'Response body: {fabricNode.text}')
+
 	# Proccess the data and return a tuple
 	return False
 
