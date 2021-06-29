@@ -153,7 +153,8 @@ def get_aci_info(aci_address, aci_username, aci_password):
 		return inventory
 
 """
-
+This function authenticates to the SD-WAN controller.
+If an error ocurrs, it returns False.
 """
 def auth_sdwan(sdwan_address, sdwan_username, sdwan_password):
 	# Build URL
@@ -179,7 +180,32 @@ def auth_sdwan(sdwan_address, sdwan_username, sdwan_password):
 	except Exception as e:
 		print('Error: Authentication to SD-WAN failed')
 		print(e)
-	
+
+"""
+This function logs out of the SD-WAN controller API.
+It returns True if the session ended successfully. 
+If an error ocurred, it returns False
+"""
+def log_out_sdwan(sdwan_address, cookie):
+	# Build URL
+	url = f'https://{sdwan_address}/logout'
+
+	# Make cookies dictionary
+	cookies = {'JSESSIONID' : cookie}
+
+	# Make the get request
+	try:
+		response = requests.get(url, cookies=cookies, verify=False)
+
+		if response.status_code == 200:
+			return True
+		else:
+			return False
+	except Exception as e:
+		print('Error: Unable to log out of the SD-WAN controller API')
+		print(e)
+		return False
+
 """
 This function gathers information from the SD-WAN to build a network 
 inventory report. If an error ocurrs, it returns False.
@@ -187,9 +213,31 @@ inventory report. If an error ocurrs, it returns False.
 def get_sdwan_info(sdwan_address, sdwan_username, sdwan_password):
 	# Authenticate to the API
 	cookie = auth_sdwan(sdwan_address, sdwan_username, sdwan_password)
+	# Debugging information
 	print(f'JSESSIONID: {cookie}')
-	# Make HTTP GET requests
-	# Process the data and return a tuple
+
+	if cookie:
+		# Make cookies dictionary
+		cookies = {'JSESSIONID' : cookie}
+
+		# Make headers dictionary
+		headers = {'Content-Type' : 'application/json'}
+
+		# Make HTTP GET requests
+		url = f'https://{sdwan_address}/dataservice/device'
+		response = requests.get(url, headers=headers, cookies=cookies, verify=False)
+		# Debugging information
+		print(f'SD-WAN response status: {response.status_code}')
+		print(f'SD-WAN response body: {response.text}')
+
+		# Log out of the SD-WAN controller API
+		print('Logging out of the SD-WAN controller API')
+		print(log_out_sdwan(sdwan_address, cookie))
+
+		# Process the data and return a tuple
+	else:
+		return False
+	
 	return False
 
 """
