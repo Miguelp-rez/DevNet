@@ -89,7 +89,8 @@ def get_aci_info(aci_address, aci_username, aci_password):
 	#print(f'Response status: {fabricNode.status_code}')
 	#print(f'Response body: {fabricNode.text}')
 
-	# Proccess the data and return a tuple
+	# Proccess the data and return a list of tuples
+	inventory = []
 	if fabricNode.status_code != 200:
 		print('Error: Failed to get fabricNode information')
 	else:
@@ -106,7 +107,9 @@ def get_aci_info(aci_address, aci_username, aci_password):
 
 			# Uptime
 			uptime = None
-			return (hostname, f'apic-{model}', software_version, uptime, serial_number)
+			inventory.append( (hostname, f'apic-{model}', software_version, uptime, serial_number) )
+			
+	return inventory
 
 """
 This function gathers information from the SD-WAN to build a network 
