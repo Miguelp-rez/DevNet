@@ -73,7 +73,7 @@ def get_aci_info(aci_address, aci_username, aci_password):
 	# Authenticate to the API
 	token = auth_aci(aci_address, aci_username, aci_password)
 	# Debugging information
-	print(f'APIC-cookie={token}')
+	#print(f'APIC-cookie={token}')
 	
 	# Error handling
 	if not token:
@@ -218,7 +218,7 @@ def get_sdwan_info(sdwan_address, sdwan_username, sdwan_password):
 	# Authenticate to the API
 	cookie = auth_sdwan(sdwan_address, sdwan_username, sdwan_password)
 	# Debugging information
-	print(f'JSESSIONID: {cookie}')
+	#print(f'JSESSIONID: {cookie}')
 
 	if cookie:
 		# Make cookies dictionary
@@ -231,12 +231,13 @@ def get_sdwan_info(sdwan_address, sdwan_username, sdwan_password):
 		url = f'https://{sdwan_address}/dataservice/device'
 		response = requests.get(url, headers=headers, cookies=cookies, verify=False)
 		# Debugging information
-		print(f'SD-WAN response status: {response.status_code}')
-		print(f'SD-WAN response body: {response.text}')
+		#print(f'SD-WAN response status: {response.status_code}')
+		#print(f'SD-WAN response body: {response.text}')
 
 		# Log out of the SD-WAN controller API
-		print('Logging out of the SD-WAN controller API')
-		print(log_out_sdwan(sdwan_address, cookie))
+		# Debugging information
+		#print('Logging out of the SD-WAN controller API')
+		#print(log_out_sdwan(sdwan_address, cookie))
 
 		# Process the data and return a list of tuples
 		inventory = []
@@ -428,6 +429,7 @@ if __name__ == '__main__':
 
 		# Debugging information
 		print(aci_info)
+		network_inventory += aci_info
 	
 	if args.sdwan_address: 
 		print(f'\nConnecting to {args.sdwan_address}')
@@ -439,6 +441,7 @@ if __name__ == '__main__':
 
 		# Debugging information
 		print(sdwan_info)
+		network_inventory += sdwan_info
 
 	# Connect to all devices, but silent logs
 	print(f'\nConnecting to all devices in {testbed.name}')
