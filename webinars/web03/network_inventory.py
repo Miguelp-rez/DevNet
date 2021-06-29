@@ -81,13 +81,17 @@ def get_aci_info(aci_address, aci_username, aci_password):
 
 	cookies = {'APIC-cookie' : token}
 
-	# Make HTTP GET requests	
+	# Building URLs
 	fabric_url = f'https://{aci_address}/api/node/class/fabricNode.json'
+	firmware_url = 'https://{aci_address}/api/node/class/{node_dn}/firmwareRunning.json'
+	uptime_url = 'https://{aci_address}/api/node/class/{node_dn}/topSystem.json'
+	
+	# Make HTTP GET request	
 	fabricNode = requests.get(fabric_url, cookies=cookies, verify=False)
 	
 	# Debugging information
-	#print(f'Response status: {fabricNode.status_code}')
-	#print(f'Response body: {fabricNode.text}')
+	#print(f'fabricNode status: {fabricNode.status_code}')
+	#print(f'fabricNode body: {fabricNode.text}')
 
 	# Proccess the data and return a list of tuples
 	inventory = []
@@ -103,8 +107,23 @@ def get_aci_info(aci_address, aci_username, aci_password):
 			dn = node['fabricNode']['attributes']['dn']
 
 			# Firmware
-			software_version = None
-
+			firmwareRunninng = requests.get(
+				firmware_url.format(aci_address=aci_address, node_dn=dn),
+				cookies = cookies,
+				verify = False
+				)
+			
+			# Debugging information
+			#print(f'firmwareRunning status: {firmwareRunninng.status_code}')
+			#print(f'firmwareRunning body: {firmwareRunninng.text}')
+			
+			if firmwareRunninng.status_code == 200:
+				if firmwareRunninng.json()['totalCount'] != '0':
+					software_version = firmwareRunninng.json()['imdata'][0]['firmwareRunning']['attributes']['version']
+				else:
+					software_version = 'Unknown'
+			else:
+				print(f'Error: Failed to get firmwareRunning information for {dn}')
 			# Uptime
 			uptime = None
 			inventory.append( (hostname, f'apic-{model}', software_version, uptime, serial_number) )
