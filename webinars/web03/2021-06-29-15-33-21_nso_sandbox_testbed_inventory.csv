@@ -1,0 +1,17 @@
+device_name,device_os,software_version,uptime,serial_number
+leaf-2,apic-N9K-C9396PX,simsw-4.1(1k),"00 days, 00 hours, 24 minutes",TEP-1-102
+spine-1,apic-N9K-C9508,simsw-4.1(1k),"00 days, 00 hours, 24 minutes",TEP-1-103
+apic1,apic-VMware Virtual Platform,Unknown,"00 days, 00 hours, 24 minutes",TEP-1-1
+leaf-1,apic-N9K-C9396PX,simsw-4.1(1k),"00 days, 00 hours, 24 minutes",TEP-1-101
+vmanage,vmanage,19.2.2,"2 days, 0 hours, 20 minutes",969E8292C5E64183A2563B7A3605B67D
+vsmart,vsmart,19.2.2,"404 days, 1 hours, 20 minutes",4E500CAE354B4341B322C5DA4BD7588A
+vbond,vedge-cloud,19.2.2,"266 days, 5 hours, 32 minutes",7AC124B4AED648EB99B9900DD56A405C
+core-rtr01,iosxr,6.3.1,"3 hours, 6 minutes",N/A
+core-rtr02,iosxr,6.3.1,"3 hours, 6 minutes",N/A
+dist-rtr01,iosxe,16.11.1b,"3 hours, 5 minutes",9QXOMXZV9WK
+dist-rtr02,iosxe,16.11.1b,"3 hours, 5 minutes",9OJFYPQ6ZPX
+dist-sw01,nxos,9.2(3),"0 days, 3 hours, 5 minutes",9YDM0ZN1Z54
+dist-sw02,nxos,9.2(3),"0 days, 3 hours, 6 minutes",9OBRZ6P90HR
+edge-firewall01,asa,9.12(2) ,3 hours 6 mins,9AD0JQPML2R
+edge-sw01,ios,15.2(CML,"3 hours, 4 minutes",9XVT7U3AITE
+internet-rtr01,iosxe,16.11.1b,"3 hours, 7 minutes",9XZEOYTIKNW
