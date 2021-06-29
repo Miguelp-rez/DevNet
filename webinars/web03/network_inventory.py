@@ -62,8 +62,7 @@ def auth_aci(aci_address, aci_username, aci_password):
 		print('Unable to authenticate to the ACI REST API')
 		print(e)
 		return False
-	
-	# Return token
+
 """
 This function gathers information from the ACI to build a network 
 inventory report. If an error ocurrs, it returns False.
@@ -124,8 +123,26 @@ def get_aci_info(aci_address, aci_username, aci_password):
 					software_version = 'Unknown'
 			else:
 				print(f'Error: Failed to get firmwareRunning information for {dn}')
+			
 			# Uptime
-			uptime = None
+			topSystem = requests.get(
+				uptime_url.format(aci_address=aci_address, node_dn=dn),
+				cookies = cookies,
+				verify = False
+				)
+
+			# Debugging information
+			#print(f'topSystem status: {topSystem.status_code}')
+			#print(f'topSystem body: {topSystem.text}')
+
+			if topSystem.status_code == 200:
+				if topSystem.json()['totalCount'] != '0':
+					uptime = topSystem.json()['imdata'][0]['topSystem']['attributes']['systemUpTime']
+				else:
+					uptime = 'Unknown'
+			else:
+				print(f'Error: Failed to get topSystem information for {dn}')
+
 			inventory.append( (hostname, f'apic-{model}', software_version, uptime, serial_number) )
 			
 	return inventory
