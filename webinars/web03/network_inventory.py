@@ -58,6 +58,8 @@ def auth_aci(aci_address, aci_username, aci_password):
 		# Return token
 		if reponse.status_code == 200:
 			return reponse.json()['imdata'][0]['aaaLogin']['attributes']['token']
+		else:
+			print('Bad request. Maybe wrong credentials.')
 	except Exception as e:
 		print('Unable to authenticate to the ACI REST API')
 		print(e)
@@ -176,6 +178,7 @@ def auth_sdwan(sdwan_address, sdwan_username, sdwan_password):
 		if reponse.status_code == 200 and 'JSESSIONID' in reponse.cookies:
 			return reponse.cookies['JSESSIONID']
 		else:
+			print('Bad request. Maybe wrong credentials')
 			return False
 	except Exception as e:
 		print('Error: Authentication to SD-WAN failed')
@@ -200,6 +203,7 @@ def log_out_sdwan(sdwan_address, cookie):
 		if response.status_code == 200:
 			return True
 		else:
+			print('Bad request')
 			return False
 	except Exception as e:
 		print('Error: Unable to log out of the SD-WAN controller API')
@@ -234,11 +238,20 @@ def get_sdwan_info(sdwan_address, sdwan_username, sdwan_password):
 		print('Logging out of the SD-WAN controller API')
 		print(log_out_sdwan(sdwan_address, cookie))
 
-		# Process the data and return a tuple
+		# Process the data and return a list of tuples
+		inventory = []
+		for device in response.json()['data']:
+			hostname = device['host-name']
+			model = device['device-model']
+			software_version = device['version']
+			uptime = device['uptime-date']
+			serial_number = device['board-serial']
+			inventory.append( (hostname, f'apic-{model}', software_version, uptime, serial_number) )
+		return inventory
 	else:
 		return False
 	
-	return False
+	
 
 """
 This function is used to look for information between two substrings
