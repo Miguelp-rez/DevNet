@@ -244,13 +244,26 @@ def get_sdwan_info(sdwan_address, sdwan_username, sdwan_password):
 			hostname = device['host-name']
 			model = device['device-model']
 			software_version = device['version']
-			uptime = device['uptime-date']
+			uptime = device['uptime-date']	# This value comes in miliseconds
+
+			# Making human readable uptime
+			uptime = uptime/1000 # Convertion to seconds is required
+			uptime = datetime.fromtimestamp(uptime) # Convertion to datetime object
+			now = datetime.now() # Current datetime object
+			
+			delta = now - uptime # Only two attributes are available: days and seconds
+
+			days = delta.days
+			hours = delta.seconds // 3600
+			minutes = (delta.seconds % 3600) // 60
+
+			uptime = f'{days} days, {hours} hours, {minutes} minutes'
+
 			serial_number = device['board-serial']
-			inventory.append( (hostname, f'apic-{model}', software_version, uptime, serial_number) )
+			inventory.append( (hostname, model, software_version, uptime, serial_number) )
 		return inventory
 	else:
 		return False
-	
 	
 
 """
