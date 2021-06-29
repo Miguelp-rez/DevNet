@@ -425,10 +425,13 @@ if __name__ == '__main__':
 		aci_username = input(f'What is the username for {args.aci_address}? ')
 		aci_password = getpass(f'Enter the password (input will be hidden): ')
 	
+		print('Making API calls')
 		aci_info = get_aci_info(args.aci_address, aci_username, aci_password)
 
 		# Debugging information
-		print(aci_info)
+		#print(aci_info)
+
+		# Merging aci_info with network_inventory
 		network_inventory += aci_info
 	
 	if args.sdwan_address: 
@@ -437,10 +440,13 @@ if __name__ == '__main__':
 		sdwan_username = input(f'What is the username for {args.sdwan_address}? ')
 		sdwan_password = getpass(f'Enter the password (input will be hidden): ')
 
+		print('Making API calls')
 		sdwan_info = get_sdwan_info(args.sdwan_address, sdwan_username, sdwan_password)
 
 		# Debugging information
-		print(sdwan_info)
+		#print(sdwan_info)
+		
+		# Merging sdwan_info with network_inventory 
 		network_inventory += sdwan_info
 
 	# Connect to all devices, but silent logs
