@@ -153,11 +153,41 @@ def get_aci_info(aci_address, aci_username, aci_password):
 		return inventory
 
 """
+
+"""
+def auth_sdwan(sdwan_address, sdwan_username, sdwan_password):
+	# Build URL
+	url = f'https://{sdwan_address}/j_security_check'
+
+	# Credentials
+	body = {
+		'j_username' : sdwan_username,
+		'j_password' : sdwan_password
+	}
+
+	# Make the post request
+	try:
+		reponse = requests.post(url, data=body, verify=False)
+		# Debugging information
+		#print(f'SD-WAN auth status: {reponse.status_code}')
+		#print(f'SD_WAN auth body: {reponse.text}')
+
+		if reponse.status_code == 200 and 'JSESSIONID' in reponse.cookies:
+			return reponse.cookies['JSESSIONID']
+		else:
+			return False
+	except Exception as e:
+		print('Error: Authentication to SD-WAN failed')
+		print(e)
+	
+"""
 This function gathers information from the SD-WAN to build a network 
 inventory report. If an error ocurrs, it returns False.
 """
 def get_sdwan_info(sdwan_address, sdwan_username, sdwan_password):
 	# Authenticate to the API
+	cookie = auth_sdwan(sdwan_address, sdwan_username, sdwan_password)
+	print(f'JSESSIONID: {cookie}')
 	# Make HTTP GET requests
 	# Process the data and return a tuple
 	return False
