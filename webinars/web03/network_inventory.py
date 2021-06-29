@@ -94,8 +94,12 @@ def get_aci_info(aci_address, aci_username, aci_password):
 
 	# Proccess the data and return a list of tuples
 	inventory = []
+	software_version = ''
+	uptime = ''
+
 	if fabricNode.status_code != 200:
 		print('Error: Failed to get fabricNode information')
+		return False
 	else:
 		# Loop over each node in the fabric
 		nodes = fabricNode.json()['imdata']
@@ -138,14 +142,15 @@ def get_aci_info(aci_address, aci_username, aci_password):
 			if topSystem.status_code == 200:
 				if topSystem.json()['totalCount'] != '0':
 					uptime = topSystem.json()['imdata'][0]['topSystem']['attributes']['systemUpTime']
+					uptime = uptime.split(':')
+					uptime = f'{uptime[0]} days, {uptime[1]} hours, {uptime[2]} minutes'
 				else:
 					uptime = 'Unknown'
 			else:
 				print(f'Error: Failed to get topSystem information for {dn}')
 
 			inventory.append( (hostname, f'apic-{model}', software_version, uptime, serial_number) )
-			
-	return inventory
+		return inventory
 
 """
 This function gathers information from the SD-WAN to build a network 
