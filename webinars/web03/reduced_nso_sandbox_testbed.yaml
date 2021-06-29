@@ -1,0 +1,15 @@
+testbed:
+  credentials:
+    default:
+      password: '%ASK{}'
+      username: cisco
+    enable:
+      password: '%ASK{}'
+devices:
+  core-rtr01:
+    connections:
+      cli:
+        ip: 10.10.20.173
+        protocol: telnet
+    os: iosxr
+    type: iosxr
