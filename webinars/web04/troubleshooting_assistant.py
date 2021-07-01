@@ -17,6 +17,14 @@ Commands to run:
 It is supposed to be run whenever an ethernet interface goes down or comes up. 
 """
 
+"""
+This function gathers both raw and JSON data. It returns the result as a tuple.
+"""
+def run_command(command, interface):
+	raw_data = command.format(id=interface)
+	json_data = command.format(id=interface)
+	return raw_data, json_data
+
 from cli import cli
 
 if __name__ == '__main__':
@@ -28,11 +36,16 @@ if __name__ == '__main__':
 		help='Ethernet interface ID')
 	args = parser.parse_args()
 
-	# Execute troubleshooting commands and store the output
-	print ('Testing python library')
+	# Create a dictionary of commands. The key is used as filename.
+	commands = {'show_interface' : 'show interface ethernet {id}'}
 
-	r = cli('show interface ethernet {id}'.format(id=args.ethernet))
-	print(r)
+	# Create a dictionary to store the output of each command.
+	output = {}
+
+	# Execute troubleshooting commands and store the output
+	print ('Running commands...')
+	for filename, command in commands.items():
+		print(run_command(command, args.ethernet))
 	# Create a timestamped folder 
 
 	# Write the output of each command on a separate file
