@@ -79,4 +79,23 @@ if __name__ == '__main__':
 
 	print(folder_name)
 	mkdir(folder_name)
+
 	# Write the output of each command on a separate file
+	for filename, results in output.items():
+		# Unpacking the results
+		raw_data, json_data = results
+
+		# Always write raw data
+		path_to_file = '{folder_name}/{filename}.txt'.format(
+				folder_name=folder_name,
+				filename=filename
+			)
+		print('Writing {file}'.format(file=path_to_file))
+
+		# Only write json_data if it exists
+		if json_data:
+			path_to_file = '{folder_name}/{filename}.json'.format(
+					folder_name=folder_name,
+					filename=filename
+				)
+			print('Writing {file}'.format(file=path_to_file))
