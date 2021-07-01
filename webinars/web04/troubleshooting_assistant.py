@@ -19,6 +19,9 @@ It is supposed to be run whenever an ethernet interface goes down or comes up.
 
 from cli import cli, clid
 from cli import structured_output_not_supported_error
+from datetime import datetime
+from os import mkdir
+
 """
 This function gathers both raw and JSON data. It returns the result as a tuple.
 """
@@ -62,7 +65,18 @@ if __name__ == '__main__':
 	for filename, command in commands.items():
 		output[filename] = run_command(command, args.ethernet)
 		# Debugging information
-		print(run_command(command, args.ethernet))
-	# Create a timestamped folder 
+		#print(run_command(command, args.ethernet))
+	
+	# Create a timestamp
+	now = datetime.now()
+	timestamp = now.strftime('%Y_%m_%d_%H_%M_%S')
 
+	# Create a timestamped folder
+	folder_name = '/bootflash/{timestamp}_ethernet_{id}_report'.format(
+		timestamp=timestamp,
+		id=args.ethernet.replace('/','_')
+		)
+
+	print(folder_name)
+	mkdir(folder_name)
 	# Write the output of each command on a separate file
