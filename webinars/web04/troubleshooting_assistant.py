@@ -17,15 +17,23 @@ Commands to run:
 It is supposed to be run whenever an ethernet interface goes down or comes up. 
 """
 
+from cli import cli, clid
+from cli import structured_output_not_supported_error
 """
 This function gathers both raw and JSON data. It returns the result as a tuple.
 """
 def run_command(command, interface):
 	raw_data = cli(command.format(id=interface))
-	json_data = clid(command.format(id=interface))
+
+	# Not all commands are supported by clid
+	try:
+		json_data = clid(command.format(id=interface))
+	except Exception as e:
+		json_data = False
+	
 	return raw_data, json_data
 
-from cli import cli, clid
+
 
 if __name__ == '__main__':
 	import argparse
