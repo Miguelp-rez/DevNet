@@ -24,7 +24,7 @@ if __name__ == '__main__':
 
 	# Read command line arguments
 	parser = argparse.ArgumentParser(description='Troubleshooting assistant')
-	parser.add_argument('--ethernet', required=True, type=str, 
+	parser.add_argument('--ethernet', metavar='ID', required=True, type=str, 
 		help='Ethernet interface ID')
 	args = parser.parse_args()
 
