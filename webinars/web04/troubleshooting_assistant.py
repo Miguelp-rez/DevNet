@@ -91,6 +91,8 @@ if __name__ == '__main__':
 				filename=filename
 			)
 		print('Writing {file}'.format(file=path_to_file))
+		with open(path_to_file, 'w') as text_file:
+			text_file.write(raw_data)
 
 		# Only write json_data if it exists
 		if json_data:
@@ -99,3 +101,6 @@ if __name__ == '__main__':
 					filename=filename
 				)
 			print('Writing {file}'.format(file=path_to_file))
+
+			with open(path_to_file, 'w') as json_file:
+				json_file.write(json_data)
