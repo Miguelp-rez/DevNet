@@ -20,14 +20,19 @@ It is supposed to be run whenever an ethernet interface goes down or comes up.
 from cli import cli
 
 if __name__ == '__main__':
-	print ('Testing python library')
+	import argparse
 
-	r = cli('show ip interface brief')
-	print(r)
 	# Read command line arguments
+	parser = argparse.ArgumentParser(description='Troubleshooting assistant')
+	parser.add_argument('--ethernet', required=True, type=str, 
+		help='Ethernet interface ID')
+	args = parser.parse_args()
 
 	# Execute troubleshooting commands and store the output
+	print ('Testing python library')
 
+	r = cli('show interface ethernet {id}'.format(id=args.ethernet))
+	print(r)
 	# Create a timestamped folder 
 
 	# Write the output of each command on a separate file
