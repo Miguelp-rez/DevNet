@@ -24,15 +24,19 @@ With regards to python, NX-OS switches with software version 9.3(5) or greater c
 For this lab, it is better to run the script directly on the switch. 
 
 Log into the switch.
+    
     telnet 10.10.20.177
 
 Use the interactive python shell to see if things work manually.
+    
     Switch# python
 
 Import the cisco CLI library.
+    
     from cli import cli
 
 Execute the following show commands.
+    
     cli('show interface ethernet #/#')
     cli('show logging last 50')
     cli('show ip arp vrf all')
@@ -41,10 +45,13 @@ Execute the following show commands.
     cli('show system internal interface ethernet #/# ethernet #/# event-history')
 
 Enable scp on the switch, so you can transfer the script from your workstation to the device bootflash.
+    
     feature scp-server 
 
 Copy the file to the switch after each update.
+    
     scp troubleshooting_assistant.py cisco@10.10.20.177:
 
 Run the script.
+    
     Switch# python bootflash:troubleshooting_assistant.py
