@@ -37,16 +37,16 @@ Import the cisco CLI library.
 
 Execute the following show commands.
     
-    cli('show interface ethernet #/#')
+    cli('show interface ethernet 1/3')
     cli('show logging last 50')
     cli('show ip arp vrf all')
     cli('show mac address-table')
     cli('show ip route vrf all')
-    cli('show system internal interface ethernet #/# ethernet #/# event-history')
+    cli('show system internal interface ethernet 1/3 ethernet 1/3 event-history')
 
 Enable scp on the switch, so you can transfer the script from your workstation to the device bootflash.
     
-    feature scp-server 
+    Switch(config)# feature scp-server 
 
 Copy the file to the switch after each update.
     
